@@ -135,10 +135,13 @@ class GafReader(OntoReader):
 
     
     def read(self):
-        first = self.handle.readline()
-        if first and first.startswith('!gaf-version:'):
-            version = first[(first.find(':') + 1):].strip()
-        else:
+        noversion=True
+        for line in self.handle:
+            if line and line.startswith('!gaf-version:'):
+                noversion=False
+                version = line[(line.find(':') + 1):].strip()
+                break
+        if noversion:
             raise ValueError("Invalid gaf file: No version specified.")
         if version not in GAF_VERSION:
             raise ValueError("Incorrect version.")
